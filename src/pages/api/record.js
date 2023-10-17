@@ -39,7 +39,6 @@ export async function record(req, res) {
         await connection.commit()
 
         res.status(200).json({ message: 'ok' });
-        connection.release()
         return
     }
     res.status(200).json({ message: 'ok' });
