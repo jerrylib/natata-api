@@ -28,16 +28,18 @@ export async function record(req, res) {
         const connection = await getMysqlInstance();
         const groupId = Date.now()
         console.log('groupId=', groupId, body)
-        body.forEach(element => {
+        await Promise.all(body.map(element => {
             const { name, score } = element
-            connection.query('INSERT INTO T_RECORDS (name, score, group_id) VALUES(?,?,?)', [name, score, groupId], (error,
+            return connection.execute('INSERT INTO T_RECORDS (name, score, group_id) VALUES(?,?,?)', [name, score, groupId], (error,
                 results) => {
                 if (error) return res.json({ error: error });
 
             });
-        });
+        }))
+        await connection.commit()
 
         res.status(200).json({ message: 'ok' });
+        connection.release()
         return
     }
     res.status(200).json({ message: 'ok' });
