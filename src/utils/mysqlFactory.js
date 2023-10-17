@@ -9,7 +9,6 @@ export default async function getMysqlInstance() {
     if (url === undefined || url === '') {
         throw new Error('DATABASE_URL unset!')
     }
-    console.log('url=', url)
     // create the connection
     connection = await mysql.createConnection(url);
     return connection
