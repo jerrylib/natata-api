@@ -40,6 +40,7 @@ export async function record(req, res) {
         res.status(200).json({ message: 'ok' });
         return
     }
+    res.status(200).json({ message: 'ok' });
 }
 
 function valid(req) {
