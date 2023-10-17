@@ -4,15 +4,21 @@ import some from 'lodash/some'
 import isString from 'lodash/isString'
 import isNumber from 'lodash/isNumber'
 import getMysqlInstance from '@/utils/mysqlFactory'
+import isEmpty from 'lodash/isEmpty'
 
 export async function record(req, res) {
     if (req.method === 'GET') {
-        console.log('get call')
         // create the connection
         const connection = await getMysqlInstance();
-        // query database
-        const [rows, fields] = await connection.execute('SELECT * FROM `T_RECORDS`', []);
-        res.status(200).json(rows);
+        if (isEmpty(req.query)) {
+            // query database
+            const [rows, fields] = await connection.execute('SELECT * FROM `T_RECORDS`', []);
+            res.status(200).json(rows);
+        } else {
+            // query database
+            const [rows, fields] = await connection.execute('SELECT * FROM `T_RECORDS` WHERE `name` = ?', [req.query.name]);
+            res.status(200).json(rows);
+        }
         return
     }
 
@@ -27,7 +33,6 @@ export async function record(req, res) {
         const { body } = req
         const connection = await getMysqlInstance();
         const groupId = Date.now()
-        console.log('groupId=', groupId, body)
         await Promise.all(body.map(element => {
             const { name, score } = element
             return connection.execute('INSERT INTO T_RECORDS (name, score, group_id) VALUES(?,?,?)', [name, score, groupId], (error,
